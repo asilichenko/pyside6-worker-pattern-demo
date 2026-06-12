@@ -4,6 +4,20 @@
 
 Demonstrates the Qt Worker Thread pattern using QThread subclassing. A WorkerThread base class provides error handling and a do_work() hook for subclasses. The main window manages the worker lifecycle: start, stop, and cleanup on close.
 
+
+# Class Diagrams
+
+## Basic Architecture
+
+<img width="600" alt="Basic Architecture" src="https://github.com/user-attachments/assets/d0d07419-707f-49dd-859f-96d9d93f1e73" />
+
+## Full
+
+<img width="600" alt="class diagram" src="https://github.com/user-attachments/assets/a5762a7d-fc45-413c-a7e8-98130abd8073" />
+
+
+# Sequence Diagrams
+
 ## Start
 
 <img width="600" alt="sequence diagram start" src="docs/sequence_diagram – start.png" />
