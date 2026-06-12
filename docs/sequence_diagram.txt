@@ -1,0 +1,105 @@
+title Test Case: Thread Lifecycle and Application Closure (PySide6)
+
+actor "User" as User
+participant "Application / Main" as App
+participant "MainWindow (UI)" as MW
+participant "Qt dispatch" as QT
+participant "MainWindowController" as MWC
+participant "CustomWorker 1\n(Thread)" as W1
+participant "CustomWorker 2\n(Thread)" as W2
+
+activate App
+App->MW: Create instance
+activate MW
+App->MWC: Create controller(window)
+activate MWC
+MWC->MW: window.close_event.connect()
+MWC->MW: Button clicks .connect()
+App->MWC: show_window()
+MWC->MW: show()
+
+
+== Scenario 1: Start and Successful Completion of the First Thread ==
+
+User->MW: Clicks "Start"
+MW->QT: clicked() signal
+QT->MWC: on_start_clicked()
+create W1
+MWC->W1: Create CustomWorker()
+MWC->W1: connect(progress, result, error, finished)
+MWC->W1: start()
+activate W1
+W1->W1: run() -> do_work()
+MWC->MW: set_status("Worker started")
+
+loop Progress loop (i from 0 to 99)
+    W1->QT: progress(int) signal
+    QT->MWC: on_progress_updated(int)
+    MWC->MW: progress_bar.setValue(value)
+end
+
+W1->QT: result.emit("Completed")
+QT->MWC: on_result_received("Completed")
+MWC->MW: set_status("completed")
+
+W1->QT: finished.emit()
+deactivate W1
+
+QT->W1: deleteLater()
+destroy W1
+QT->MWC: remove_worker()
+MWC->MWC: self.worker = None
+
+
+== Scenario 2: Start Second Thread and Close App While Running ==
+
+User->MW: Clicks "Start"
+MW->QT: clicked() signal
+QT->MWC: on_start_clicked()
+create W2
+MWC->W2: Create CustomWorker()
+MWC->W2: connect(...)
+MWC->W2: start()
+activate W2
+W2->W2: run() -> do_work()
+MWC->MW: set_status("Worker started")
+
+W2->QT: progress.emit(1)
+QT->MWC: on_progress_updated(1)
+MWC->MW: progress_bar.setValue(1)
+
+note over User, MW: User decides to close the window
+User->MW: Closes window (clicks X)
+MW->MW: closeEvent(event)
+MW->QT: close_event.emit()
+QT->MWC: on_window_closed()
+MWC->MW: hide()
+
+MWC->W2: requestInterruption()
+
+note over MWC: Main thread blocks on wait()\nEvent processing is suspended
+MWC->W2: wait(3000)
+
+note over W2: Worker thread detects interruption\nand emits remaining signals to the queue
+W2->QT: result.emit("Stopping worker...")
+W2->QT: result.emit("Cancelled")
+W2->W2: run() method finishes
+
+W2->QT: finished.emit()
+note over W2: QThread internals terminate OS thread
+deactivate W2
+
+note over MWC: wait() returns (Thread is dead)
+note over QT, MWC: Control returns to Application Event Loop.\nQueued signals are now being processed sequentially.
+
+QT->MWC: queued result: on_result_received(...)
+MWC->MW: set_status(...)
+QT->W2: queued finished: deleteLater()
+QT->MWC: queued finished: remove_worker()
+MWC->MWC: self.worker = None
+destroyafter W2
+
+note over App: app.exec() returns, sys.exit() called
+deactivate MWC
+deactivate MW
+deactivate App
