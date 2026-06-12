@@ -18,6 +18,26 @@ Demonstrates the Qt Worker Thread pattern using QThread subclassing. A WorkerThr
 
 <img width="600" alt="sequence diagram case 2" src="docs/sequence_diagram – case2.png" />
 
+
+## Build
+
+1. Create virtual environment
+```
+python -m venv .venv
+```
+2. Activate environment
+```
+.venv\Scripts\activate.bat
+```
+3. Upgrate `pip`
+```
+python -m pip install --upgrade pip setuptools wheel
+```
+4. Install requirements
+```
+pip install -r requirements.txt
+```
+
 ## Run
 
 ```
