@@ -30,23 +30,23 @@ logger = logging.getLogger(__name__)
 
 class CustomWorker(BaseWorker):
 
-  def __init__(self, error_mode: bool = False) -> None:
-    super().__init__()
-    self.error_mode = error_mode
+    def __init__(self, error_mode: bool = False) -> None:
+        super().__init__()
+        self.error_mode = error_mode
 
-  def do_work(self) -> None:
-    for i in range(100):
-      if self.isInterruptionRequested():
-        logger.debug("interrupted")
-        self.result.emit("Stopping worker...")
-        time.sleep(1)
-        self.result.emit("Cancelled")
-        return
+    def do_work(self) -> None:
+        for i in range(100):
+            if self.isInterruptionRequested():
+                logger.debug("interrupted")
+                self.result.emit("Stopping worker...")
+                time.sleep(1)
+                self.result.emit("Cancelled")
+                return
 
-      if self.error_mode and i == 50:
-        raise RuntimeError("Error occurs")
+            if self.error_mode and i == 50:
+                raise RuntimeError("Error occurs")
 
-      self.progress.emit(i + 1)
-      time.sleep(0.05)
+            self.progress.emit(i + 1)
+            time.sleep(0.05)
 
-    self.result.emit("Completed")
+        self.result.emit("Completed")

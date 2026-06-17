@@ -124,61 +124,61 @@ QPushButton:disabled {
 
 
 def run() -> None:
-  logging_config()
-  logger.info("Starting")
+    logging_config()
+    logger.info("Starting")
 
-  app = QApplication(sys.argv)
-  app.aboutToQuit.connect(on_shutdown)
+    app = QApplication(sys.argv)
+    app.aboutToQuit.connect(on_shutdown)
 
-  app.setStyleSheet(STYLE)
+    app.setStyleSheet(STYLE)
 
-  try:
-    main_wnd = MainWindow()
-    _ = MainWindowController(main_wnd)
-  except Exception:
-    logger.exception("Failed to start")  # auto add traceback
-    raise
+    try:
+        main_wnd = MainWindow()
+        _ = MainWindowController(main_wnd)
+    except Exception:
+        logger.exception("Failed to start")  # auto add traceback
+        raise
 
-  main_wnd.show()
-  sys.exit(app.exec())  # blocking, last line can be run
+    main_wnd.show()
+    sys.exit(app.exec())  # blocking, last line can be run
 
 
 def on_shutdown() -> None:
-  logger.info("Shutdown")
+    logger.info("Shutdown")
 
 
 def logging_config(level=logging.DEBUG):
-  root_logger = logging.getLogger()
-  root_logger.setLevel(level)
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)
 
-  if root_logger.hasHandlers():
-    root_logger.handlers.clear()
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
 
-  date_format: str = '%Y-%m-%d %H:%M:%S'
-  log_format: str = '%(asctime)s [%(levelname)s] %(name)s[%(funcName)s]: %(message)s'
-  formatter = logging.Formatter(log_format, date_format)
+    date_format: str = '%Y-%m-%d %H:%M:%S'
+    log_format: str = '%(asctime)s [%(levelname)s] %(name)s[%(funcName)s]: %(message)s'
+    formatter = logging.Formatter(log_format, date_format)
 
-  console_handler = logging.StreamHandler()
-  console_handler.setFormatter(formatter)
-  root_logger.addHandler(console_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
 
-  LOGS.mkdir(exist_ok=True)
+    LOGS.mkdir(exist_ok=True)
 
-  err_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "error.log", maxBytes=1_000_000, backupCount=3)
-  err_log_handler.setLevel(logging.ERROR)
-  err_log_handler.setFormatter(formatter)
-  root_logger.addHandler(err_log_handler)
+    err_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "error.log", maxBytes=1_000_000, backupCount=3)
+    err_log_handler.setLevel(logging.ERROR)
+    err_log_handler.setFormatter(formatter)
+    root_logger.addHandler(err_log_handler)
 
-  debug_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "debug.log", maxBytes=1_000_000, backupCount=3)
-  debug_log_handler.setLevel(logging.DEBUG)
-  debug_log_handler.setFormatter(formatter)
-  root_logger.addHandler(debug_log_handler)
+    debug_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "debug.log", maxBytes=1_000_000, backupCount=3)
+    debug_log_handler.setLevel(logging.DEBUG)
+    debug_log_handler.setFormatter(formatter)
+    root_logger.addHandler(debug_log_handler)
 
-  info_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "info.log", maxBytes=1_000_000, backupCount=3)
-  info_log_handler.setLevel(logging.INFO)
-  info_log_handler.setFormatter(formatter)
-  root_logger.addHandler(info_log_handler)
+    info_log_handler: logging.FileHandler = RotatingFileHandler(LOGS / "info.log", maxBytes=1_000_000, backupCount=3)
+    info_log_handler.setLevel(logging.INFO)
+    info_log_handler.setFormatter(formatter)
+    root_logger.addHandler(info_log_handler)
 
 
 if __name__ == '__main__':
-  run()
+    run()

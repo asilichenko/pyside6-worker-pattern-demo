@@ -25,10 +25,10 @@ import logging
 from PySide6.QtCore import Signal, QMargins
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
-  QLabel,
-  QPushButton,
-  QVBoxLayout,
-  QWidget, QProgressBar,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget, QProgressBar,
 )
 
 logger = logging.getLogger(__name__)
@@ -38,59 +38,59 @@ from .props import Status
 
 
 def set_status(widget: QWidget, status: Status) -> None:
-  widget.setProperty("status", status.value)
-  widget.style().unpolish(widget)
-  widget.style().polish(widget)
+    widget.setProperty("status", status.value)
+    widget.style().unpolish(widget)
+    widget.style().polish(widget)
 
 
 class MainWindow(QMainWindow):
-  close_event = Signal()
+    close_event = Signal()
 
-  def __init__(self) -> None:
-    super().__init__()
-    self._setup_ui()
+    def __init__(self) -> None:
+        super().__init__()
+        self._setup_ui()
 
-  def _setup_ui(self) -> None:
-    self.setWindowTitle("Worker Example")
-    self.resize(320, 320)
+    def _setup_ui(self) -> None:
+        self.setWindowTitle("Worker Example")
+        self.resize(320, 320)
 
-    self.label = QLabel("Ready")
-    self.progress_bar = QProgressBar()
-    self.start_button = QPushButton("Start")
-    self.start_err_button = QPushButton("Start with error")
-    self.stop_button = QPushButton("Stop")
+        self.label = QLabel("Ready")
+        self.progress_bar = QProgressBar()
+        self.start_button = QPushButton("Start")
+        self.start_err_button = QPushButton("Start with error")
+        self.stop_button = QPushButton("Stop")
 
-    self.label.setObjectName("status_label")
-    self.start_button.setObjectName("start_button")
-    self.start_err_button.setObjectName("start_err_button")
-    self.stop_button.setObjectName("stop_button")
+        self.label.setObjectName("status_label")
+        self.start_button.setObjectName("start_button")
+        self.start_err_button.setObjectName("start_err_button")
+        self.stop_button.setObjectName("stop_button")
 
-    main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
-    main_layout.setSpacing(10)
-    main_layout.setContentsMargins(QMargins(24, 9, 24, 20))
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(QMargins(24, 9, 24, 20))
 
-    main_layout.addWidget(self.label)
-    main_layout.addWidget(self.progress_bar)
+        main_layout.addWidget(self.label)
+        main_layout.addWidget(self.progress_bar)
 
-    btn_layout = QVBoxLayout()
-    btn_layout.setSpacing(10)
-    btn_layout.setContentsMargins(0, 20, 0, 0)
+        btn_layout = QVBoxLayout()
+        btn_layout.setSpacing(10)
+        btn_layout.setContentsMargins(0, 20, 0, 0)
 
-    btn_layout.addWidget(self.start_button)
-    btn_layout.addWidget(self.start_err_button)
-    btn_layout.addWidget(self.stop_button)
+        btn_layout.addWidget(self.start_button)
+        btn_layout.addWidget(self.start_err_button)
+        btn_layout.addWidget(self.stop_button)
 
-    main_layout.addLayout(btn_layout)
+        main_layout.addLayout(btn_layout)
 
-    w = QWidget()
-    w.setLayout(main_layout)
-    self.setCentralWidget(w)
+        w = QWidget()
+        w.setLayout(main_layout)
+        self.setCentralWidget(w)
 
-  def set_status(self, text: str, status: Status = Status.DEFAULT) -> None:
-    self.label.setText(text)
-    set_status(self.label, status)
+    def set_status(self, text: str, status: Status = Status.DEFAULT) -> None:
+        self.label.setText(text)
+        set_status(self.label, status)
 
-  def closeEvent(self, event: QCloseEvent) -> None:
-    self.close_event.emit()
-    super().closeEvent(event)
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.close_event.emit()
+        super().closeEvent(event)
